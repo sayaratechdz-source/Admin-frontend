@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box, Typography, TextField, Button, Stack,
-  Alert, InputAdornment, IconButton, Divider,
+  Alert, InputAdornment, IconButton,
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import PersonIcon from "@mui/icons-material/Person";
