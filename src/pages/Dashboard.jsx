@@ -14,9 +14,9 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import PeopleIcon from "@mui/icons-material/People";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import { getProducts } from "../firebase/products";
-import { getAllPurchases } from "../firebase/purchases";
-import { getAllUsers } from "../firebase/users";
+import { getProducts } from "../api/strapi";
+import { getAllPurchases } from "../api/strapi";
+import { getAllUsers } from "../api/strapi";
 
 const RED = "#E63946";
 const PALETTE = [RED, "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4"];
@@ -83,7 +83,7 @@ export default function Dashboard() {
   // مبيعات شهرية
   const monthlySales = {};
   purchases.forEach(p => {
-    const date = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt || Date.now());
+    const date = new Date(p.createdAt || Date.now());
     const k = date.toLocaleString("fr-FR", { month: "short", year: "2-digit" });
     monthlySales[k] = (monthlySales[k] || 0) + (p.quantity || 0);
   });
@@ -240,8 +240,7 @@ export default function Dashboard() {
                       </TableCell>
                     </TableRow>
                   );
-                })}
-              </TableBody>
+                })}              </TableBody>
             </Table>
           </Paper>
         </Grid>

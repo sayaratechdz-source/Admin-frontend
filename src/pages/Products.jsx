@@ -13,7 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
-import { getProducts, addProduct, updateProduct, deleteProduct } from "../firebase/products";
+import { getProducts, addProduct, updateProduct, deleteProduct } from "../api/strapi";
 
 const MARQUES = ["PEUGEOT","RENAULT","VOLKSWAGEN","SEAT","SKODA","MERCEDES","AUDI","KIA","HYUNDAI","CHEVROLET","FIAT","CHERY","GEELY"];
 const EMPTY_FORM = { productTitle: "", productPrice: "", stock: "", category: "PEUGEOT", discount: "", productDescription: "", image: null };
@@ -61,7 +61,9 @@ export default function Products() {
     }
     setSaving(true);
     try {
-      const data = {
+      // بناء FormData لـ Strapi (multipart/form-data)
+      const fd = new FormData();
+      fd.append("data", JSON.stringify({
         productTitle: form.productTitle,
         productPrice: Number(form.productPrice),
         stock: Number(form.stock) || 0,
@@ -69,12 +71,13 @@ export default function Products() {
         discount: Math.abs(Number(form.discount) || 0),
         productDescription: form.productDescription || ".",
         productRating: 0,
-        imageUrl: form.imageUrl || null,
-      };
+      }));
+      if (form.image) fd.append("files.image", form.image);
+
       if (editId) {
-        await updateProduct(editId, data, form.image || null);
+        await updateProduct(editId, fd);
       } else {
-        await addProduct(data, form.image || null);
+        await addProduct(fd);
       }
       setSnack({ open: true, msg: editId ? "Produit modifié ✓" : "Produit ajouté ✓", sev: "success" });
       setDialog(false);

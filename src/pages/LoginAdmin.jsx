@@ -11,10 +11,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth } from "../firebase/auth";
-import { db } from "../firebase/firestore";
+import axios from "axios";
+
+const STRAPI_URL = process.env.REACT_APP_STRAPI_URL || "https://backend-stdz-production.up.railway.app";
 
 export default function LoginAdmin() {
   const navigate = useNavigate();
@@ -29,27 +28,35 @@ export default function LoginAdmin() {
     setLoading(true);
     setError("");
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const uid = result.user.uid;
+      // تسجيل الدخول عبر Strapi
+      const { data } = await axios.post(`${STRAPI_URL}/api/auth/local`, {
+        identifier: email,
+        password,
+      });
 
-      // التحقق من أن المستخدم admin في Firestore
-      const snap = await getDoc(doc(db, "users", uid));
-      const userData = snap.exists() ? snap.data() : {};
+      const { jwt, user } = data;
 
-      if (userData.role !== "admin") {
+      // التحقق من أن المستخدم لديه role admin أو superAdmin
+      const isAdmin =
+        user.role?.type === "admin" ||
+        user.role?.type === "superAdmin" ||
+        user.isAdmin === true;
+
+      if (!isAdmin) {
         setError("Accès refusé. Compte administrateur requis.");
-        await auth.signOut();
         setLoading(false);
         return;
       }
 
       localStorage.setItem("adminAuth", "true");
-      localStorage.setItem("adminUid", uid);
-      localStorage.setItem("adminName", userData.username || email);
+      localStorage.setItem("adminJwt", jwt);
+      localStorage.setItem("adminUid", String(user.id));
+      localStorage.setItem("adminName", user.username || email);
       navigate("/");
     } catch (err) {
+      const status = err?.response?.status;
       const msg =
-        err.code === "auth/invalid-credential" || err.code === "auth/wrong-password"
+        status === 400 || status === 401
           ? "Identifiants incorrects."
           : "Erreur de connexion au serveur.";
       setError(msg);

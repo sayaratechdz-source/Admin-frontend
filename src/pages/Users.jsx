@@ -9,7 +9,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import StoreIcon from "@mui/icons-material/Store";
 import PersonIcon from "@mui/icons-material/Person";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { getAllUsers, updateUserRole } from "../firebase/users";
+import { getAllUsers, updateUserRole } from "../api/strapi";
 
 export default function Users() {
   const [tab, setTab]     = useState(0);
@@ -112,7 +112,7 @@ export default function Users() {
               <TableRow><TableCell colSpan={5} sx={{ textAlign: "center", py: 6, borderBottom: "none", color: "rgba(255,255,255,0.3)" }}>Aucun utilisateur</TableCell></TableRow>
             )}
             {currentList.map(u => {
-              const date = u.createdAt?.toDate ? u.createdAt.toDate() : new Date(u.createdAt || Date.now());
+              const date = new Date(u.createdAt || Date.now());
               return (
                 <TableRow key={u.id} sx={{ "&:hover": { bgcolor: "rgba(255,255,255,0.02)" }, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <TableCell sx={{ borderBottom: "none" }}>

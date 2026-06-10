@@ -6,7 +6,7 @@ import {
   InputAdornment, Select, MenuItem, FormControl,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { getAllPurchases, updatePurchaseStatus } from "../firebase/purchases";
+import { getAllPurchases, updatePurchaseStatus } from "../api/strapi";
 
 const STATUS_CONFIG = {
   pending:   { label: "En attente", color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
@@ -94,7 +94,7 @@ export default function Orders() {
           <TableBody>
             {filtered.map(o => {
               const status = STATUS_CONFIG[o.status] || STATUS_CONFIG.pending;
-              const date = o.createdAt?.toDate ? o.createdAt.toDate() : new Date(o.createdAt || Date.now());
+              const date = new Date(o.createdAt || Date.now());
               return (
                 <TableRow key={o.id} sx={{ "&:hover": { bgcolor: "rgba(255,255,255,0.02)" }, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <TableCell sx={{ borderBottom: "none" }}>
