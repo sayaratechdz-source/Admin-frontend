@@ -54,6 +54,7 @@ export default function LoginAdmin() {
       localStorage.setItem("adminName", user.username || email);
       navigate("/");
     } catch (err) {
+      console.error("Strapi error detail:", err?.response?.data);
       const status = err?.response?.status;
       const msg =
         status === 400 || status === 401
