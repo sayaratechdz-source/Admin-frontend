@@ -35,13 +35,16 @@ export default function LoginAdmin() {
       });
 
       const { jwt, user } = data;
-      console.log("Strapi user object:", user);
 
-      // التحقق من أن المستخدم لديه role vendeur
-      const roleType = user.role?.type || "";
-      const isAdmin = roleType === "vendeur";
+      // جلب الـ role بشكل منفصل لأن /api/auth/local لا يرجعه
+      const { data: meData } = await axios.get(`${STRAPI_URL}/api/users/me?populate=role`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
 
+      const roleType = meData.role?.type || "";
       console.log("Strapi user role type:", roleType);
+
+      const isAdmin = roleType === "vendeur";
 
       if (!isAdmin) {
         setError("Accès refusé. Compte administrateur requis.");
