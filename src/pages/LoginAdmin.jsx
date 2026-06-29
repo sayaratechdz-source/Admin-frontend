@@ -35,12 +35,13 @@ export default function LoginAdmin() {
       });
 
       const { jwt, user } = data;
+      console.log("Strapi user object:", user);
 
-      // التحقق من أن المستخدم لديه role admin أو superAdmin
-      const isAdmin =
-        user.role?.type === "admin" ||
-        user.role?.type === "superAdmin" ||
-        user.isAdmin === true;
+      // التحقق من أن المستخدم لديه role vendeur
+      const roleType = user.role?.type || "";
+      const isAdmin = roleType === "vendeur";
+
+      console.log("Strapi user role type:", roleType);
 
       if (!isAdmin) {
         setError("Accès refusé. Compte administrateur requis.");

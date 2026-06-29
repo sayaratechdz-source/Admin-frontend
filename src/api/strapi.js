@@ -1,4 +1,17 @@
-import axios from "axios";
+Roles
+Add new role
+List of roles
+
+Search
+Name
+Description
+Users
+Actions
+Acheteur	Acheteur	4 users	
+Delete Acheteur
+Authenticated	Default role given to authenticated user.	3 users	
+Public	Default role given to unauthenticated user.	0 user	
+Vendeur	Vendeurimport axios from "axios";
 
 const STRAPI_URL =
   process.env.REACT_APP_STRAPI_URL ||
